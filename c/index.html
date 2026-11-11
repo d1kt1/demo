@@ -225,7 +225,7 @@ html.c-wait main,html.c-wait header.top{visibility:hidden}
           <a class="btn btn-primary" href="#book"><svg aria-hidden="true"><use href="#i-cal"/></svg>Записаться онлайн</a>
           <a class="btn btn-ghost" href="#contacts"><svg aria-hidden="true"><use href="#i-phone"/></svg>Позвонить</a>
         </div>
-        <div class="facts">
+        <div class="facts" id="c-facts">
           <span><svg aria-hidden="true"><use href="#i-shield"/></svg>Гарантия на работы</span>
           <span><svg aria-hidden="true"><use href="#i-truck"/></svg>Выезд и диагностика на месте</span>
           <span><svg aria-hidden="true"><use href="#i-card"/></svg>Карта, наличные, перевод</span>
@@ -263,8 +263,8 @@ html.c-wait main,html.c-wait header.top{visibility:hidden}
       <div class="sec-head"><h2 class="title" id="s-h">Как это работает</h2></div>
       <div class="steps">
         <div class="step"><div class="step-n">01</div><b>Запишитесь</b><p>Онлайн за минуту — выберите услугу и свободное время. Или позвоните.</p></div>
-        <div class="step"><div class="step-n">02</div><b>Осмотр и цена</b><p>Смотрим машину и называем точную стоимость. Без сюрпризов в конце.</p></div>
-        <div class="step"><div class="step-n">03</div><b>Ремонт с гарантией</b><p>Делаем работу, показываем результат, даём гарантию.</p></div>
+        <div class="step"><div class="step-n">02</div><b id="c-s2t">Осмотр и цена</b><p id="c-s2p">Смотрим машину и называем точную стоимость. Без сюрпризов в конце.</p></div>
+        <div class="step"><div class="step-n">03</div><b id="c-s3t">Ремонт с гарантией</b><p id="c-s3p">Делаем работу, показываем результат, даём гарантию.</p></div>
       </div>
     </div>
   </section>
@@ -275,7 +275,7 @@ html.c-wait main,html.c-wait header.top{visibility:hidden}
       <div class="book-aside">
         <h2 class="title" id="b-h">Запись онлайн</h2>
         <p class="sec-sub">Выберите работу и свободное время. Мастер получит заявку сразу и перезвонит, чтобы подтвердить.</p>
-        <p><b>Сварку</b> записываем на осмотр: точную цену называем после него, до начала работ.</p>
+        <p id="c-booknote"><b>Сварку</b> записываем на осмотр: точную цену называем после него, до начала работ.</p>
       </div>
       <form class="book" id="bookForm" novalidate>
         <div class="book-form" id="bookFields">
@@ -408,11 +408,30 @@ html.c-wait main,html.c-wait header.top{visibility:hidden}
      wsub:'Весь уход за машиной в одном месте.',
      book:[['Комплексная мойка','от 800 ₽'],['Химчистка салона','от 6 000 ₽'],['Полировка кузова','от 8 000 ₽'],['Керамика','от 15 000 ₽']]}
   };
+
+  var EXTRA={
+   service:{wh:'Что ремонтируем',facts:[['i-shield','Гарантия на работы'],['i-gear','Компьютерная диагностика'],['i-card','Карта, наличные, перевод']],
+     s2:['Диагностика и цена','Находим причину и называем точную стоимость до начала работ.'],s3:['Ремонт с гарантией','Делаем работу, показываем заменённые детали, даём гарантию.'],
+     note:'<b>Сложный ремонт</b> записываем на диагностику: точную цену называем после неё, до начала работ.'},
+   tire:{wh:'Услуги',facts:[['i-clock','Без очереди в сезон'],['i-disc','Колёса любого радиуса'],['i-card','Карта, наличные, перевод']],
+     s2:['Приезжаете ко времени','Без живой очереди: ваше время закреплено за вами.'],s3:['Готово за 30–40 минут','Переобуваем, балансируем, оплата на месте.'],
+     note:'<b>Цена</b> зависит от радиуса и типа шин — мастер уточнит при звонке.'},
+   body:{wh:'Что делаем',facts:[['i-shield','Гарантия на работы'],['i-wrench','Рихтовка и покраска'],['i-card','Карта, наличные, перевод']],
+     s2:['Осмотр и цена','Смотрим кузов и называем точную стоимость. Без сюрпризов в конце.'],s3:['Ремонт с гарантией','Делаем работу, показываем результат, даём гарантию.'],
+     note:'<b>Кузовной ремонт</b> записываем на осмотр: точную цену называем после него, до начала работ.'},
+   detail:{wh:'Услуги',facts:[['i-shield','Бережно к лаку и салону'],['i-clock','Запись на точное время'],['i-card','Карта, наличные, перевод']],
+     s2:['Приезжаете ко времени','Машину принимают сразу, без ожидания.'],s3:['Забираете чистую','Показываем результат при выдаче — до и после.'],
+     note:'<b>Цена</b> зависит от класса автомобиля и состояния — уточним при подтверждении записи.'}
+  };
   var $=function(id){return document.getElementById(id);};
   var esc=function(t){return String(t).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});};
   fetch('concepts.json',{cache:'no-store'}).then(function(r){return r.json();}).then(function(all){
     var d=all[k]; if(!d){done();return;}
-    var c=CAT[d.cat]||CAT.service;
+    var c=CAT[d.cat]||CAT.service, x=EXTRA[d.cat]||EXTRA.service;
+    $('w-h').textContent=x.wh;
+    $('c-facts').innerHTML=x.facts.map(function(f){return '<span><svg aria-hidden="true"><use href="#'+f[0]+'"/></svg>'+esc(f[1])+'</span>';}).join('');
+    $('c-s2t').textContent=x.s2[0]; $('c-s2p').textContent=x.s2[1]; $('c-s3t').textContent=x.s3[0]; $('c-s3p').textContent=x.s3[1];
+    $('c-booknote').innerHTML=x.note;
     document.title=d.name+' — концепт сайта';
     $('c-name').textContent=d.name;
     var ini=(d.name.replace(/[^A-Za-zА-Яа-яЁё0-9 ]/g,'').trim().split(/\s+/).map(function(w){return w[0];}).join('').slice(0,2)||d.name.slice(0,2)).toUpperCase();
@@ -427,7 +446,9 @@ html.c-wait main,html.c-wait header.top{visibility:hidden}
     if(d.rating){ $('c-revsub').textContent='Сейчас у вас '+d.rating+' на Яндекс Картах и '+d.reviews+' — на сайте они будут работать на вас. Ниже — как это может выглядеть.'; }
     $('c-addr').textContent=d.city+', '+d.addr; $('c-mapnote').textContent='Здесь будет кнопка «Открыть в Яндекс Картах»';
     $('c-hours').textContent='Как в вашей карточке на картах';
-    if(d.phone){ $('c-phone').textContent=d.phone; $('c-phone-top').textContent=d.phone; }
+    if(d.phone){ $('c-phone').textContent=d.phone; $('c-phone-top').textContent=d.phone;
+      var tel='tel:+'+d.phone.replace(/\D/g,'').replace(/^8(?=\d{10}$)/,'7');
+      document.querySelectorAll('a[href="#contacts"]').forEach(function(a){a.setAttribute('href',tel);}); }
     $('c-copy').textContent='© '+d.name+', '+d.city;
     $('c-footnote').textContent='Концепт для «'+d.name+'» — не официальный сайт';
     $('c-bname').textContent=d.name; $('c-banner').hidden=false;
