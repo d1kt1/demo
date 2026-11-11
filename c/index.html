@@ -444,7 +444,9 @@ html.c-wait main,html.c-wait header.top{visibility:hidden}
     $('c-wsub').textContent=c.wsub;
     var sel=$('b-service'); sel.innerHTML=''; c.book.forEach(function(x){var o=document.createElement('option');o.value=x[0];o.textContent=x[0]+(x[1]?' — '+x[1]:'');sel.appendChild(o);});
     if(d.rating){ $('c-revsub').textContent='Сейчас у вас '+d.rating+' на Яндекс Картах и '+d.reviews+' — на сайте они будут работать на вас. Ниже — как это может выглядеть.'; }
-    $('c-addr').textContent=d.city+', '+d.addr; $('c-mapnote').textContent='Здесь будет кнопка «Открыть в Яндекс Картах»';
+    $('c-addr').textContent=d.addr?(d.city+', '+d.addr):d.city;
+    var mq=encodeURIComponent(d.name+' '+d.city+(d.addr?' '+d.addr:''));
+    $('c-mapnote').innerHTML='<a href="https://yandex.ru/maps/?text='+mq+'" target="_blank" rel="noopener">Открыть в Яндекс Картах →</a>';
     $('c-hours').textContent='Как в вашей карточке на картах';
     if(d.phone){ $('c-phone').textContent=d.phone; $('c-phone-top').textContent=d.phone;
       var tel='tel:+'+d.phone.replace(/\D/g,'').replace(/^8(?=\d{10}$)/,'7');
